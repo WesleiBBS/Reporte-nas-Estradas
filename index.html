@@ -53,8 +53,8 @@
     <meta name="twitter:image" content="/Reporte-nas-Estradas/icon-512.png" />
     
     <title>Reporte Estradas - Prefeitura</title>
-    <script type="module" crossorigin src="/Reporte-nas-Estradas/assets/index-C-Wa-qbo.js"></script>
-    <link rel="stylesheet" crossorigin href="/Reporte-nas-Estradas/assets/index-CUMCv91P.css">
+    <script type="module" crossorigin src="/Reporte-nas-Estradas/assets/index-BqXXNHy4.js"></script>
+    <link rel="stylesheet" crossorigin href="/Reporte-nas-Estradas/assets/index-epdKgH0x.css">
   </head>
   <body>
     <!-- Loading Screen Modernizado -->
@@ -95,12 +95,25 @@
       let installPromptElement;
       let installButton;
       let dismissButton;
+      let isIOS = false;
+      let isAndroid = false;
+      let isInStandaloneMode = false;
+      let hasShownPrompt = false;
 
-      // Elementos do DOM
+      // Detectar plataforma e modo standalone
       window.addEventListener('DOMContentLoaded', () => {
         installPromptElement = document.getElementById('install-prompt');
         installButton = document.getElementById('install-button');
         dismissButton = document.getElementById('dismiss-button');
+
+        // Detectar plataformas
+        const userAgent = navigator.userAgent.toLowerCase();
+        isIOS = /ipad|iphone|ipod/.test(userAgent) && !window.MSStream;
+        isAndroid = /android/.test(userAgent);
+        isInStandaloneMode = 
+          ('standalone' in window.navigator && window.navigator.standalone) ||
+          window.matchMedia('(display-mode: standalone)').matches ||
+          window.matchMedia('(display-mode: fullscreen)').matches;
 
         // Event listeners para os botões
         if (installButton) {
@@ -110,17 +123,52 @@
         if (dismissButton) {
           dismissButton.addEventListener('click', dismissInstallPrompt);
         }
+
+        // Log de debug
+        console.log('🔍 Detectando plataforma...');
+        console.log('📱 iOS:', isIOS);
+        console.log('🤖 Android:', isAndroid);
+        console.log('📲 Standalone:', isInStandaloneMode);
+        console.log('🌐 User Agent:', userAgent);
+
+        // Se já está instalado, não mostrar prompt
+        if (isInStandaloneMode) {
+          console.log('✅ App já está rodando como PWA');
+          if (installPromptElement) {
+            installPromptElement.style.display = 'none';
+          }
+          return;
+        }
+
+        // Para iOS, mostrar prompt personalizado após delay
+        if (isIOS) {
+          setTimeout(() => {
+            if (!hasShownPrompt && !isInStandaloneMode) {
+              showIOSInstallPrompt();
+            }
+          }, 4000);
+        }
+
+        // Para outros dispositivos móveis sem suporte ao beforeinstallprompt
+        if (isAndroid && !deferredPrompt) {
+          setTimeout(() => {
+            if (!hasShownPrompt && !isInStandaloneMode) {
+              showGenericInstallPrompt();
+            }
+          }, 6000);
+        }
       });
 
       // Registrar Service Worker
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/Reporte-nas-Estradas/sw.js')
+          const swPath = window.location.hostname === 'localhost' ? '/sw.js' : '/Reporte-nas-Estradas/sw.js';
+          navigator.serviceWorker.register(swPath)
             .then((registration) => {
-              console.log('SW registrado com sucesso:', registration.scope);
+              console.log('✅ SW registrado com sucesso:', registration.scope);
             })
             .catch((registrationError) => {
-              console.log('Falha ao registrar SW:', registrationError);
+              console.error('❌ Falha ao registrar SW:', registrationError);
             });
         });
       }
@@ -129,7 +177,6 @@
       window.addEventListener('load', () => {
         setTimeout(() => {
           document.body.classList.add('app-loaded');
-          // Remove o loading screen após a transição
           setTimeout(() => {
             const loading = document.getElementById('loading');
             if (loading) loading.style.display = 'none';
@@ -137,60 +184,101 @@
         }, 1000);
       });
       
-      // Detectar prompt de instalação PWA
+      // Detectar prompt de instalação PWA (Chrome/Edge Android)
       window.addEventListener('beforeinstallprompt', (e) => {
+        console.log('📥 beforeinstallprompt disparado');
         e.preventDefault();
         deferredPrompt = e;
         
         // Verificar se não foi dispensado recentemente
         const dismissedTime = localStorage.getItem('installPromptDismissed');
         const now = new Date().getTime();
-        const oneDayAgo = 24 * 60 * 60 * 1000; // 24 horas em milissegundos
+        const oneDayAgo = 24 * 60 * 60 * 1000; // 24 horas
         
         if (!dismissedTime || (now - parseInt(dismissedTime)) > oneDayAgo) {
-          // Mostrar prompt após um delay
-          setTimeout(() => {
-            showInstallPrompt();
-          }, 3000); // Mostra após 3 segundos
+          if (!hasShownPrompt && !isInStandaloneMode) {
+            setTimeout(() => {
+              showInstallPrompt();
+            }, 3000);
+          }
         }
       });
 
       // Função para mostrar o prompt de instalação
       function showInstallPrompt() {
-        if (installPromptElement && deferredPrompt) {
+        if (hasShownPrompt) return;
+        
+        console.log('📱 Mostrando prompt de instalação');
+        hasShownPrompt = true;
+        
+        if (installPromptElement) {
+          const titleElement = installPromptElement.querySelector('h3');
+          const descElement = installPromptElement.querySelector('p');
+          const buttonElement = installPromptElement.querySelector('#install-button');
+          
+          if (isIOS) {
+            titleElement.textContent = '📱 Adicionar à Tela Inicial';
+            descElement.textContent = 'Para uma melhor experiência, adicione este app à sua tela inicial!';
+            buttonElement.innerHTML = '📲 Ver Instruções';
+          } else if (deferredPrompt) {
+            titleElement.textContent = '🛣️ Instalar Reporte Estradas';
+            descElement.textContent = 'Adicione este app à sua tela inicial para acesso rápido e uso offline!';
+            buttonElement.innerHTML = '⬇️ Instalar App';
+          } else {
+            titleElement.textContent = '📱 Adicionar à Tela Inicial';
+            descElement.textContent = 'Para melhor experiência, adicione este app à sua tela inicial!';
+            buttonElement.innerHTML = '📲 Ver Como Fazer';
+          }
+          
           installPromptElement.classList.add('show');
         }
       }
 
+      // Função específica para iOS
+      function showIOSInstallPrompt() {
+        console.log('🍎 Mostrando prompt para iOS');
+        showInstallPrompt();
+      }
+
+      // Função para dispositivos sem beforeinstallprompt
+      function showGenericInstallPrompt() {
+        console.log('📱 Mostrando prompt genérico para mobile');
+        showInstallPrompt();
+      }
+
       // Função para instalar o app
       async function installApp() {
-        if (!deferredPrompt) {
-          // Fallback para iOS ou outros navegadores
-          showIOSInstallInstructions();
-          return;
-        }
-
-        // Mostrar o prompt nativo
-        deferredPrompt.prompt();
-        
-        // Aguardar a escolha do usuário
-        const { outcome } = await deferredPrompt.userChoice;
-        
-        if (outcome === 'accepted') {
-          console.log('Usuário aceitou instalar o PWA');
-          hideInstallPrompt();
+        if (deferredPrompt) {
+          // Chrome/Edge com suporte nativo
+          try {
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            
+            console.log('Resultado da instalação:', outcome);
+            
+            if (outcome === 'accepted') {
+              console.log('✅ Usuário aceitou instalar o PWA');
+              hideInstallPrompt();
+            } else {
+              console.log('❌ Usuário recusou instalar o PWA');
+            }
+            
+            deferredPrompt = null;
+          } catch (error) {
+            console.error('Erro durante instalação:', error);
+            showInstallInstructions();
+          }
         } else {
-          console.log('Usuário recusou instalar o PWA');
+          // Fallback para iOS e outros navegadores
+          showInstallInstructions();
         }
-        
-        deferredPrompt = null;
       }
 
       // Função para dispensar o prompt
       function dismissInstallPrompt() {
         hideInstallPrompt();
-        // Salvar o timestamp para não mostrar novamente por 24 horas
         localStorage.setItem('installPromptDismissed', new Date().getTime().toString());
+        console.log('⏰ Prompt dispensado, não mostrar por 24h');
       }
 
       // Função para esconder o prompt
@@ -200,46 +288,180 @@
         }
       }
 
-      // Instrucões específicas para iOS
-      function showIOSInstallInstructions() {
-        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-        const isInStandaloneMode = ('standalone' in window.navigator) && (window.navigator.standalone);
+      // Instruções detalhadas para instalação
+      function showInstallInstructions() {
+        let instructions = '';
         
-        if (isIOS && !isInStandaloneMode) {
-          alert(`Para instalar este app no seu iPhone/iPad:
-          
-1. Toque no ícone de compartilhar (📤) 
+        if (isIOS) {
+          instructions = `📱 COMO INSTALAR NO iOS:
+
+1. Toque no ícone de compartilhar (📤) na barra de navegação
 2. Role para baixo e toque em "Adicionar à Tela de Início"
 3. Toque em "Adicionar" para confirmar
-          
-O app ficará disponível na sua tela inicial!`);
+
+✨ O app ficará disponível na sua tela inicial e funcionará offline!`;
+        } else if (isAndroid) {
+          instructions = `🤖 COMO INSTALAR NO ANDROID:
+
+Chrome/Edge:
+1. Toque nos 3 pontos (⋮) no menu do navegador
+2. Toque em "Adicionar à tela inicial" ou "Instalar app"
+3. Confirme a instalação
+
+Samsung Internet:
+1. Toque no menu (☰)
+2. Selecione "Adicionar página à tela inicial"
+
+Firefox:
+1. Toque nos 3 pontos (⋮)
+2. Selecione "Instalar"
+
+✨ O app ficará disponível na sua tela inicial!`;
         } else {
-          alert(`Para usar este app:
-          
-• Adicione um atalho à tela inicial do seu dispositivo
-• O app funcionará offline após ser instalado
-• Acesse através do ícone na tela inicial`);
+          instructions = `💻 COMO INSTALAR:
+
+Desktop (Chrome/Edge):
+• Clique no ícone de instalação (⬇️) na barra de endereços
+• Ou vá no menu > "Instalar Reporte Estradas"
+
+Mobile:
+• Acesse pelo navegador e procure "Adicionar à tela inicial"
+• Ou "Instalar app" no menu do navegador
+
+✨ Após instalado, o app funcionará offline e terá acesso rápido!`;
         }
+
+        // Criar modal customizado para instruções
+        showInstructionsModal(instructions);
+      }
+
+      // Modal customizado para instruções
+      function showInstructionsModal(instructions) {
+        // Remover modal existente se houver
+        const existingModal = document.getElementById('install-instructions-modal');
+        if (existingModal) {
+          existingModal.remove();
+        }
+
+        // Criar modal
+        const modal = document.createElement('div');
+        modal.id = 'install-instructions-modal';
+        modal.style.cssText = `
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: rgba(0, 0, 0, 0.8);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 10000;
+          padding: 20px;
+          box-sizing: border-box;
+        `;
+
+        const content = document.createElement('div');
+        content.style.cssText = `
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          color: white;
+          padding: 24px;
+          border-radius: 20px;
+          max-width: 400px;
+          width: 100%;
+          max-height: 80vh;
+          overflow-y: auto;
+          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+          text-align: left;
+          position: relative;
+        `;
+
+        const closeBtn = document.createElement('button');
+        closeBtn.innerHTML = '❌';
+        closeBtn.style.cssText = `
+          position: absolute;
+          top: 12px;
+          right: 12px;
+          background: rgba(255, 255, 255, 0.2);
+          border: none;
+          border-radius: 50%;
+          width: 32px;
+          height: 32px;
+          cursor: pointer;
+          font-size: 14px;
+        `;
+
+        const text = document.createElement('pre');
+        text.textContent = instructions;
+        text.style.cssText = `
+          white-space: pre-wrap;
+          font-family: inherit;
+          margin: 0;
+          font-size: 14px;
+          line-height: 1.5;
+        `;
+
+        content.appendChild(closeBtn);
+        content.appendChild(text);
+        modal.appendChild(content);
+        document.body.appendChild(modal);
+
+        // Event listeners para fechar
+        closeBtn.onclick = () => modal.remove();
+        modal.onclick = (e) => {
+          if (e.target === modal) modal.remove();
+        };
+
+        // Fechar com ESC
+        const handleEsc = (e) => {
+          if (e.key === 'Escape') {
+            modal.remove();
+            document.removeEventListener('keydown', handleEsc);
+          }
+        };
+        document.addEventListener('keydown', handleEsc);
       }
       
       // Detectar quando PWA foi instalado
       window.addEventListener('appinstalled', (evt) => {
-        console.log('PWA foi instalado com sucesso!');
+        console.log('🎉 PWA foi instalado com sucesso!');
         hideInstallPrompt();
         
-        // Opcional: mostrar mensagem de sucesso
+        // Mostrar feedback de sucesso
         setTimeout(() => {
-          alert('🎉 App instalado com sucesso! Agora você pode acessá-lo pela tela inicial.');
-        }, 1000);
+          const successModal = document.createElement('div');
+          successModal.style.cssText = `
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 16px 24px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4);
+            z-index: 10000;
+            text-align: center;
+            font-weight: bold;
+          `;
+          successModal.textContent = '🎉 App instalado com sucesso!';
+          document.body.appendChild(successModal);
+
+          setTimeout(() => {
+            successModal.remove();
+          }, 3000);
+        }, 500);
       });
 
-      // Detectar se já está rodando como PWA
-      if (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) {
-        console.log('App rodando como PWA instalada');
-        // Esconder prompt se já está instalado
-        if (installPromptElement) {
-          installPromptElement.style.display = 'none';
-        }
+      // Detectar mudanças no display mode
+      if (window.matchMedia) {
+        const standaloneQuery = window.matchMedia('(display-mode: standalone)');
+        standaloneQuery.addListener((e) => {
+          if (e.matches) {
+            console.log('✅ App agora está rodando como PWA');
+            hideInstallPrompt();
+          }
+        });
       }
     </script>
   </body>
