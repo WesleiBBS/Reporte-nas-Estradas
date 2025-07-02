@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#2563eb" />
+    <meta name="description" content="Aplicativo para reportar problemas nas estradas do município à prefeitura" />
+    <meta name="keywords" content="prefeitura, estradas, reportes, problemas, vias públicas" />
+    <meta name="author" content="Prefeitura Municipal" />
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/Reporte-nas-Estradas/assets/manifest-Dx_KvrA-.json" />
+    
+    <!-- Apple PWA Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Reporte Estradas" />
+    <link rel="apple-touch-icon" href="/Reporte-nas-Estradas/assets/icon-192-Daxg-Rma.png" />
+    
+    <!-- Microsoft PWA Meta Tags -->
+    <meta name="msapplication-TileColor" content="#2563eb" />
+    <meta name="msapplication-TileImage" content="data:image/png;base64,ZGF0YTppbWFnZS9zdmcreG1sO2Jhc2U2NCxQSE4yWnlCM2FXUjBhRDBpTVRreUlpQm9aV2xuYUhROUlqRTVNaUlnZG1sbGQwSnZlRDBpTUNBd0lERTVNaUF4T1RJaUlHWnBiR3c5SW01dmJtVWlJSGh0Ykc1elBTSm9kSFJ3T2k4dmQzZDNMbmN6TG05eVp5OHlNREF3TDNOMlp5SStDanh5WldOMElIZHBaSFJvUFNJeE9USWlJR2hsYVdkb2REMGlNVGt5SWlCeWVEMGlNalFpSUdacGJHdzlJaU15TlRZelpXSWlMejRLUEhCaGRHZ2daRDBpVFRrMklEUTRRekV5TUM0eklEUTRJREUwTUNBMk55NDNJREUwTUNBNU1rTXhOREFnTVRFMkxqTWdNVEl3TGpNZ01UTTJJRGsySURFek5rTTNNUzQzSURFek5pQTFNaUF4TVRZdU15QTFNaUE1TWtNMU1pQTJOeTQzSURjeExqY2dORGdnT1RZZ05EaGFJaUJtYVd4c1BTSjNhR2wwWlNJdlBnbzhjR0YwYUNCa1BTSk5PVFlnTnpKRE1UQTNJRGN5SURFeE5pQTRNU0F4TVRZZ09USkRNVEUySURFd015QXhNRGNnTVRFeUlEazJJREV4TWtNNE5TQXhNVElnTnpZZ01UQXpJRGMySURreVF6YzJJRGd4SURnMUlEY3lJRGsySURjeVdpSWdabWxzYkQwaUl6STFOak5sWWlJdlBnbzhjR0YwYUNCa1BTSk5ORGdnTVRRMFNERTBORll4TmpCSU5EaFdNVFEwV2lJZ1ptbHNiRDBpZDJocGRHVWlMejRLUEM5emRtYysKCg==" />
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Reporte Estradas - Prefeitura" />
+    <meta property="og:description" content="Aplicativo para reportar problemas nas estradas do município à prefeitura" />
+    <meta property="og:image" content="/icon-512.png" />
+    <meta property="og:url" content="/" />
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Reporte Estradas - Prefeitura" />
+    <meta name="twitter:description" content="Aplicativo para reportar problemas nas estradas do município à prefeitura" />
+    <meta name="twitter:image" content="/icon-512.png" />
+    
+    <title>Reporte Estradas - Prefeitura</title>
+    
+    <style>
+      /* Loading screen */
+      #loading {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: #2563eb;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        color: white;
+        font-family: system-ui, -apple-system, sans-serif;
+        z-index: 9999;
+      }
+      
+      #loading .spinner {
+        width: 40px;
+        height: 40px;
+        border: 4px solid rgba(255, 255, 255, 0.3);
+        border-top: 4px solid white;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-bottom: 20px;
+      }
+      
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+      
+      /* Hide loading when app loads */
+      .app-loaded #loading {
+        display: none;
+      }
+    </style>
+    <script type="module" crossorigin src="/Reporte-nas-Estradas/assets/index-B4YtGkPi.js"></script>
+    <link rel="stylesheet" crossorigin href="/Reporte-nas-Estradas/assets/index-6yCqnJPD.css">
+  </head>
+  <body>
+    <!-- Loading Screen -->
+    <div id="loading">
+      <div class="spinner"></div>
+      <h2>Reporte Estradas</h2>
+      <p>Carregando aplicativo...</p>
+    </div>
+    
+    <div id="root"></div>
+    
+    <script>
+      // Registrar Service Worker
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js')
+            .then((registration) => {
+              console.log('SW registrado com sucesso:', registration.scope);
+            })
+            .catch((registrationError) => {
+              console.log('Falha ao registrar SW:', registrationError);
+            });
+        });
+      }
+      
+      // Remover loading screen quando app carregar
+      window.addEventListener('load', () => {
+        setTimeout(() => {
+          document.body.classList.add('app-loaded');
+        }, 1000);
+      });
+      
+      // Detectar instalação PWA
+      let deferredPrompt;
+      window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        
+        // Mostrar botão de instalação customizado se necessário
+        const installButton = document.getElementById('install-button');
+        if (installButton) {
+          installButton.style.display = 'block';
+          installButton.addEventListener('click', () => {
+            deferredPrompt.prompt();
+            deferredPrompt.userChoice.then((choiceResult) => {
+              if (choiceResult.outcome === 'accepted') {
+                console.log('Usuário aceitou instalar o PWA');
+              }
+              deferredPrompt = null;
+            });
+          });
+        }
+      });
+      
+      // Detectar quando PWA foi instalado
+      window.addEventListener('appinstalled', (evt) => {
+        console.log('PWA foi instalado');
+      });
+    </script>
+  </body>
+</html>
+
