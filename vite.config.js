@@ -8,7 +8,7 @@ export default defineConfig({
   base: '/Reporte-nas-Estradas/',
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './'),
+      '@': path.resolve(__dirname, '.'),
     },
   },
 })
