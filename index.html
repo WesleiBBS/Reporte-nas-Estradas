@@ -6,13 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
     
     <!-- PWA Meta Tags -->
-    <meta name="theme-color" content="#2563eb" />
+    <meta name="theme-color" content="#667eea" />
     <meta name="description" content="Aplicativo para reportar problemas nas estradas do município à prefeitura" />
     <meta name="keywords" content="prefeitura, estradas, reportes, problemas, vias públicas" />
     <meta name="author" content="Prefeitura Municipal" />
     
     <!-- PWA Manifest -->
-    <link rel="manifest" href="/Reporte-nas-Estradas/assets/manifest-BA-unk9N.json" />
+    <link rel="manifest" href="/Reporte-nas-Estradas/assets/manifest-h6KAgmk-.json" />
     
     <!-- Apple PWA Meta Tags -->
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -22,9 +22,9 @@
     <link rel="apple-touch-startup-image" href="/icon-512.png" />
     
     <!-- Microsoft PWA Meta Tags -->
-    <meta name="msapplication-TileColor" content="#2563eb" />
+    <meta name="msapplication-TileColor" content="#667eea" />
     <meta name="msapplication-TileImage" content="data:image/png;base64,ZGF0YTppbWFnZS9zdmcreG1sO2Jhc2U2NCxQSE4yWnlCM2FXUjBhRDBpTVRreUlpQm9aV2xuYUhROUlqRTVNaUlnZG1sbGQwSnZlRDBpTUNBd0lERTVNaUF4T1RJaUlHWnBiR3c5SW01dmJtVWlJSGh0Ykc1elBTSm9kSFJ3T2k4dmQzZDNMbmN6TG05eVp5OHlNREF3TDNOMlp5SStDanh5WldOMElIZHBaSFJvUFNJeE9USWlJR2hsYVdkb2REMGlNVGt5SWlCeWVEMGlNalFpSUdacGJHdzlJaU15TlRZelpXSWlMejRLUEhCaGRHZ2daRDBpVFRrMklEUTRRekV5TUM0eklEUTRJREUwTUNBMk55NDNJREUwTUNBNU1rTXhOREFnTVRFMkxqTWdNVEl3TGpNZ01UTTJJRGsySURFek5rTTNNUzQzSURFek5pQTFNaUF4TVRZdU15QTFNaUE1TWtNMU1pQTJOeTQzSURjeExqY2dORGdnT1RZZ05EaGFJaUJtYVd4c1BTSjNhR2wwWlNJdlBnbzhjR0YwYUNCa1BTSk5PVFlnTnpKRE1UQTNJRGN5SURFeE5pQTRNU0F4TVRZZ09USkRNVEUySURFd015QXhNRGNnTVRFeUlEazJJREV4TWtNNE5TQXhNVElnTnpZZ01UQXpJRGMySURreVF6YzJJRGd4SURnMUlEY3lJRGsySURjeVdpSWdabWxzYkQwaUl6STFOak5sWWlJdlBnbzhjR0YwYUNCa1BTSk5ORGdnTVRRMFNERTBORll4TmpCSU5EaFdNVFEwV2lJZ1ptbHNiRDBpZDJocGRHVWlMejRLUEM5emRtYysKCg==" />
-    <meta name="msapplication-navbutton-color" content="#2563eb" />
+    <meta name="msapplication-navbutton-color" content="#667eea" />
     
     <!-- Mobile specific tags -->
     <meta name="mobile-web-app-capable" content="yes" />
@@ -53,14 +53,27 @@
     <title>Reporte Estradas - Prefeitura</title>
     
     <style>
-      /* Loading screen */
+      /* Reset e base */
+      * {
+        box-sizing: border-box;
+      }
+      
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+      }
+
+      /* Loading screen modernizado */
       #loading {
         position: fixed;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        background: #2563eb;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -71,13 +84,28 @@
       }
       
       #loading .spinner {
-        width: 40px;
-        height: 40px;
-        border: 4px solid rgba(255, 255, 255, 0.3);
+        width: 50px;
+        height: 50px;
+        border: 4px solid rgba(255, 255, 255, 0.2);
         border-top: 4px solid white;
         border-radius: 50%;
         animation: spin 1s linear infinite;
         margin-bottom: 20px;
+        box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+      }
+      
+      #loading h2 {
+        font-size: 2rem;
+        font-weight: bold;
+        margin: 0 0 10px 0;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      }
+      
+      #loading p {
+        font-size: 1rem;
+        opacity: 0.9;
+        margin: 0;
+        animation: pulse 2s infinite;
       }
       
       @keyframes spin {
@@ -85,20 +113,198 @@
         100% { transform: rotate(360deg); }
       }
       
+      @keyframes pulse {
+        0%, 100% { opacity: 0.9; }
+        50% { opacity: 0.6; }
+      }
+      
       /* Hide loading when app loads */
       .app-loaded #loading {
-        display: none;
+        opacity: 0;
+        transition: opacity 0.5s ease-out;
+        pointer-events: none;
+      }
+
+      /* Gradientes modernos */
+      .gradient-bg {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+      }
+      
+      .gradient-primary {
+        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+      }
+      
+      .gradient-success {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      }
+      
+      .gradient-danger {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+      }
+
+      /* Cards com glassmorphism */
+      .card-glass {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      }
+      
+      .card-shadow {
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      }
+
+      /* Botões modernos com alto relevo */
+      .btn-primary, .btn-secondary, .btn-danger, .btn-success {
+        border: none;
+        font-weight: 600;
+        border-radius: 16px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+        cursor: pointer;
+      }
+      
+      .btn-primary {
+        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+        color: white;
+        box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+      }
+      
+      .btn-primary:hover {
+        background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+        transform: translateY(-3px);
+        box-shadow: 0 15px 35px rgba(59, 130, 246, 0.6);
+      }
+      
+      .btn-secondary {
+        background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+        color: white;
+        box-shadow: 0 8px 25px rgba(107, 114, 128, 0.4);
+      }
+      
+      .btn-danger {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        color: white;
+        box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4);
+      }
+      
+      .btn-success {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+        box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+      }
+
+      /* Animações suaves */
+      .hover-lift:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+      }
+      
+      .touch-feedback:active {
+        transform: scale(0.97);
+      }
+      
+      .fade-in {
+        animation: fadeIn 0.6s ease-out;
+      }
+      
+      @keyframes fadeIn {
+        from { 
+          opacity: 0; 
+          transform: translateY(30px); 
+        }
+        to { 
+          opacity: 1; 
+          transform: translateY(0); 
+        }
+      }
+
+      /* Navegação moderna */
+      .nav-modern {
+        background: linear-gradient(135deg, #1e3a8a 0%, #3730a3 100%);
+        backdrop-filter: blur(20px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      }
+
+      /* Inputs modernos */
+      .input-modern {
+        border: 2px solid rgba(59, 130, 246, 0.2);
+        border-radius: 16px;
+        padding: 16px 20px;
+        transition: all 0.3s ease;
+        background: rgba(255, 255, 255, 0.9);
+        font-size: 16px;
+      }
+      
+      .input-modern:focus {
+        border-color: #3b82f6;
+        outline: none;
+        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+        background: white;
+      }
+
+      /* Badge styles */
+      .badge-modern {
+        border-radius: 25px;
+        padding: 6px 16px;
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      /* Mobile optimizations */
+      @media (max-width: 768px) {
+        .container-mobile {
+          padding: 1rem;
+          max-width: 100%;
+        }
+        
+        .card-mobile {
+          margin: 0;
+          border-radius: 20px;
+        }
+      }
+
+      /* Dark mode support */
+      @media (prefers-color-scheme: dark) {
+        .card-glass {
+          background: rgba(31, 41, 55, 0.95);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          color: white;
+        }
+      }
+
+      /* PWA specific improvements */
+      @media (display-mode: standalone) {
+        body {
+          user-select: none;
+          -webkit-user-select: none;
+          -webkit-touch-callout: none;
+        }
+        
+        #loading {
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
       }
     </style>
-    <script type="module" crossorigin src="/Reporte-nas-Estradas/assets/index-CNp76leV.js"></script>
-    <link rel="stylesheet" crossorigin href="/Reporte-nas-Estradas/assets/index-x5yykmNF.css">
+    <script type="module" crossorigin src="/Reporte-nas-Estradas/assets/index-B3-ViH0k.js"></script>
+    <link rel="stylesheet" crossorigin href="/Reporte-nas-Estradas/assets/index-DMQYtkiO.css">
   </head>
   <body>
-    <!-- Loading Screen -->
+    <!-- Loading Screen Modernizado -->
     <div id="loading">
       <div class="spinner"></div>
-      <h2>Reporte Estradas</h2>
+      <h2>🛣️ Reporte Estradas</h2>
       <p>Carregando aplicativo...</p>
+      <div style="margin-top: 20px; font-size: 0.8rem; opacity: 0.7;">
+        <p>📱 PWA - Funciona offline</p>
+      </div>
     </div>
     
     <div id="root"></div>
@@ -121,6 +327,11 @@
       window.addEventListener('load', () => {
         setTimeout(() => {
           document.body.classList.add('app-loaded');
+          // Remove o loading screen após a transição
+          setTimeout(() => {
+            const loading = document.getElementById('loading');
+            if (loading) loading.style.display = 'none';
+          }, 500);
         }, 1000);
       });
       
