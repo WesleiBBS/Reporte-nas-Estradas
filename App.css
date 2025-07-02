@@ -52,9 +52,217 @@
 @layer base {
   * {
     @apply border-border;
+    box-sizing: border-box;
   }
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+  }
+}
+
+/* Gradientes modernos */
+@layer components {
+  .gradient-bg {
+    @apply bg-gradient-to-br from-blue-500 via-purple-500 to-purple-700;
+    min-height: 100vh;
+  }
+  
+  .gradient-primary {
+    @apply bg-gradient-to-r from-blue-500 to-blue-700;
+  }
+  
+  .gradient-success {
+    @apply bg-gradient-to-r from-emerald-500 to-emerald-700;
+  }
+  
+  .gradient-danger {
+    @apply bg-gradient-to-r from-red-500 to-red-700;
+  }
+  
+  .gradient-warning {
+    @apply bg-gradient-to-r from-yellow-500 to-orange-500;
+  }
+
+  /* Cards com glassmorphism */
+  .card-glass {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  }
+  
+  .card-shadow {
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+
+  /* Navegação moderna */
+  .nav-glass {
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Botões modernos com alto relevo */
+  .btn-modern {
+    @apply font-semibold rounded-2xl transition-all duration-300 transform hover:scale-105 active:scale-95;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  }
+  
+  .btn-modern:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+  }
+
+  /* Inputs modernos */
+  .input-modern {
+    @apply rounded-2xl border-0 bg-white/90 backdrop-blur-sm shadow-lg;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+  
+  .input-modern:focus {
+    @apply ring-2 ring-blue-500/50;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1), inset 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+
+  /* Badges modernos */
+  .badge-modern {
+    @apply rounded-full px-3 py-1 text-xs font-semibold;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Animações */
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+  }
+  
+  .animate-slide-up {
+    animation: slideUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+  
+  .animate-bounce-in {
+    animation: bounceIn 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+  }
+
+  /* Hover effects */
+  .hover-lift {
+    @apply transition-all duration-300;
+  }
+  
+  .hover-lift:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  }
+
+  /* Status badges específicos */
+  .status-enviado {
+    @apply bg-blue-100 text-blue-800 border-blue-200;
+  }
+
+  .status-em-andamento {
+    @apply bg-yellow-100 text-yellow-800 border-yellow-200;
+  }
+
+  .status-concluido {
+    @apply bg-green-100 text-green-800 border-green-200;
+  }
+
+  .urgencia-baixa {
+    @apply bg-green-100 text-green-800 border-green-200;
+  }
+
+  .urgencia-media {
+    @apply bg-yellow-100 text-yellow-800 border-yellow-200;
+  }
+
+  .urgencia-alta {
+    @apply bg-red-100 text-red-800 border-red-200;
+  }
+
+  /* Melhorias para elementos de foto */
+  .photo-preview {
+    @apply rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300;
+  }
+
+  .photo-preview:hover {
+    transform: scale(1.02);
+  }
+
+  /* Elementos de localização */
+  .location-info {
+    @apply bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-4 border border-blue-100;
+  }
+
+  /* Melhorias no prompt de instalação */
+  .install-prompt {
+    @apply fixed bottom-4 left-4 right-4 max-w-md mx-auto z-50;
+    animation: slideUpFade 0.5s ease-out forwards;
+  }
+
+  @keyframes slideUpFade {
+    from { 
+      opacity: 0; 
+      transform: translateY(100px); 
+    }
+    to { 
+      opacity: 1; 
+      transform: translateY(0); 
+    }
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 640px) {
+    .card-glass {
+      margin: 0.75rem;
+      border-radius: 16px;
+    }
+    
+    .nav-glass {
+      border-radius: 0;
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes bounceIn {
+  0% { opacity: 0; transform: scale(0.3); }
+  50% { opacity: 1; transform: scale(1.05); }
+  70% { transform: scale(0.9); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+/* PWA Specific Styles */
+@media (display-mode: standalone) {
+  body {
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+  }
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .card-glass {
+    border-radius: 16px;
+    margin: 0.5rem;
+  }
+  
+  .btn-modern {
+    @apply text-base py-3 px-6;
   }
 }
