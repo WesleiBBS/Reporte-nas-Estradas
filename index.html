@@ -2,7 +2,9 @@
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/x-icon" href="/Reporte-nas-Estradas/favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="/Reporte-nas-Estradas/favicon.svg" />
+    <link rel="apple-touch-icon" sizes="192x192" href="/Reporte-nas-Estradas/icon-192.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
     
     <!-- PWA Meta Tags -->
@@ -12,18 +14,18 @@
     <meta name="author" content="Prefeitura Municipal" />
     
     <!-- PWA Manifest -->
-    <link rel="manifest" href="/manifest.json" />
+    <link rel="manifest" href="/Reporte-nas-Estradas/manifest.json" />
     
     <!-- Apple PWA Meta Tags -->
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="Reporte Estradas" />
-    <link rel="apple-touch-icon" href="/icon-192.png" />
-    <link rel="apple-touch-startup-image" href="/icon-512.png" />
+    <link rel="apple-touch-icon" href="/Reporte-nas-Estradas/icon-192.png" />
+    <link rel="apple-touch-startup-image" href="/Reporte-nas-Estradas/icon-512.png" />
     
     <!-- Microsoft PWA Meta Tags -->
     <meta name="msapplication-TileColor" content="#667eea" />
-    <meta name="msapplication-TileImage" content="/icon-192.png" />
+    <meta name="msapplication-TileImage" content="/Reporte-nas-Estradas/icon-192.png" />
     <meta name="msapplication-navbutton-color" content="#667eea" />
     
     <!-- Mobile specific tags -->
@@ -31,7 +33,7 @@
     <meta name="application-name" content="Reporte Estradas" />
     
     <!-- Preload key resources -->
-    <link rel="preload" href="/icon-192.png" as="image" />
+    <link rel="preload" href="/Reporte-nas-Estradas/icon-192.png" as="image" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     
     <!-- Prevent auto zoom on iOS -->
@@ -41,362 +43,16 @@
     <meta property="og:type" content="website" />
     <meta property="og:title" content="Reporte Estradas - Prefeitura" />
     <meta property="og:description" content="Aplicativo para reportar problemas nas estradas do município à prefeitura" />
-    <meta property="og:image" content="/icon-512.png" />
-    <meta property="og:url" content="/" />
+    <meta property="og:image" content="/Reporte-nas-Estradas/icon-512.png" />
+    <meta property="og:url" content="/Reporte-nas-Estradas/" />
     
     <!-- Twitter Card Meta Tags -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Reporte Estradas - Prefeitura" />
     <meta name="twitter:description" content="Aplicativo para reportar problemas nas estradas do município à prefeitura" />
-    <meta name="twitter:image" content="/icon-512.png" />
+    <meta name="twitter:image" content="/Reporte-nas-Estradas/icon-512.png" />
     
     <title>Reporte Estradas - Prefeitura</title>
-    
-    <style>
-      /* Reset e base */
-      * {
-        box-sizing: border-box;
-      }
-      
-      body {
-        margin: 0;
-        padding: 0;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        min-height: 100vh;
-      }
-
-      /* Loading screen modernizado */
-      #loading {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        color: white;
-        font-family: system-ui, -apple-system, sans-serif;
-        z-index: 9999;
-      }
-      
-      #loading .spinner {
-        width: 50px;
-        height: 50px;
-        border: 4px solid rgba(255, 255, 255, 0.2);
-        border-top: 4px solid white;
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-        margin-bottom: 20px;
-        box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
-      }
-      
-      #loading h2 {
-        font-size: 2rem;
-        font-weight: bold;
-        margin: 0 0 10px 0;
-        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-      }
-      
-      #loading p {
-        font-size: 1rem;
-        opacity: 0.9;
-        margin: 0;
-        animation: pulse 2s infinite;
-      }
-      
-      @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-      }
-      
-      @keyframes pulse {
-        0%, 100% { opacity: 0.9; }
-        50% { opacity: 0.6; }
-      }
-      
-      /* Hide loading when app loads */
-      .app-loaded #loading {
-        opacity: 0;
-        transition: opacity 0.5s ease-out;
-        pointer-events: none;
-      }
-
-      /* Gradientes modernos */
-      .gradient-bg {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        min-height: 100vh;
-      }
-      
-      .gradient-primary {
-        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-      }
-      
-      .gradient-success {
-        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-      }
-      
-      .gradient-danger {
-        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-      }
-
-      /* Cards com glassmorphism */
-      .card-glass {
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(20px);
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        border-radius: 20px;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-      }
-      
-      .card-shadow {
-        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-      }
-
-      /* Botões modernos com alto relevo */
-      .btn-primary, .btn-secondary, .btn-danger, .btn-success {
-        border: none;
-        font-weight: 600;
-        border-radius: 16px;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        position: relative;
-        overflow: hidden;
-        cursor: pointer;
-      }
-      
-      .btn-primary {
-        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-        color: white;
-        box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
-      }
-      
-      .btn-primary:hover {
-        background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
-        transform: translateY(-3px);
-        box-shadow: 0 15px 35px rgba(59, 130, 246, 0.6);
-      }
-      
-      .btn-secondary {
-        background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
-        color: white;
-        box-shadow: 0 8px 25px rgba(107, 114, 128, 0.4);
-      }
-      
-      .btn-danger {
-        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-        color: white;
-        box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4);
-      }
-      
-      .btn-success {
-        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-        color: white;
-        box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
-      }
-
-      /* Animações suaves */
-      .hover-lift:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-      }
-      
-      .touch-feedback:active {
-        transform: scale(0.97);
-      }
-      
-      .fade-in {
-        animation: fadeIn 0.6s ease-out;
-      }
-      
-      @keyframes fadeIn {
-        from { 
-          opacity: 0; 
-          transform: translateY(30px); 
-        }
-        to { 
-          opacity: 1; 
-          transform: translateY(0); 
-        }
-      }
-
-      /* Navegação moderna */
-      .nav-modern {
-        background: linear-gradient(135deg, #1e3a8a 0%, #3730a3 100%);
-        backdrop-filter: blur(20px);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-      }
-
-      /* Inputs modernos */
-      .input-modern {
-        border: 2px solid rgba(59, 130, 246, 0.2);
-        border-radius: 16px;
-        padding: 16px 20px;
-        transition: all 0.3s ease;
-        background: rgba(255, 255, 255, 0.9);
-        font-size: 16px;
-      }
-      
-      .input-modern:focus {
-        border-color: #3b82f6;
-        outline: none;
-        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
-        background: white;
-      }
-
-      /* Badge styles */
-      .badge-modern {
-        border-radius: 25px;
-        padding: 6px 16px;
-        font-size: 12px;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.8px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      }
-
-      /* Mobile optimizations */
-      @media (max-width: 768px) {
-        .container-mobile {
-          padding: 1rem;
-          max-width: 100%;
-        }
-        
-        .card-mobile {
-          margin: 0;
-          border-radius: 20px;
-        }
-      }
-
-      /* Dark mode support */
-      @media (prefers-color-scheme: dark) {
-        .card-glass {
-          background: rgba(31, 41, 55, 0.95);
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          color: white;
-        }
-      }
-
-      /* PWA specific improvements */
-      @media (display-mode: standalone) {
-        body {
-          user-select: none;
-          -webkit-user-select: none;
-          -webkit-touch-callout: none;
-        }
-        
-        #loading {
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-      }
-
-      /* Install Prompt Styling */
-      #install-prompt {
-        position: fixed;
-        bottom: 20px;
-        left: 20px;
-        right: 20px;
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(20px);
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        border-radius: 20px;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-        padding: 20px;
-        z-index: 10000;
-        display: none;
-        animation: slideUpFromBottom 0.5s ease-out forwards;
-        max-width: 400px;
-        margin: 0 auto;
-      }
-
-      #install-prompt.show {
-        display: block;
-      }
-
-      .install-icon {
-        width: 60px;
-        height: 60px;
-        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-        border-radius: 15px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-bottom: 15px;
-        box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
-      }
-
-      .install-content h3 {
-        margin: 0 0 8px 0;
-        font-size: 1.2rem;
-        font-weight: bold;
-        color: #1f2937;
-      }
-
-      .install-content p {
-        margin: 0 0 15px 0;
-        color: #6b7280;
-        font-size: 0.9rem;
-        line-height: 1.4;
-      }
-
-      .install-buttons {
-        display: flex;
-        gap: 10px;
-      }
-
-      .install-btn {
-        flex: 1;
-        padding: 12px 20px;
-        border: none;
-        border-radius: 12px;
-        font-weight: 600;
-        font-size: 0.9rem;
-        cursor: pointer;
-        transition: all 0.3s ease;
-      }
-
-      .install-btn.primary {
-        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-        color: white;
-        box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
-      }
-
-      .install-btn.primary:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
-      }
-
-      .install-btn.secondary {
-        background: #f3f4f6;
-        color: #6b7280;
-        border: 1px solid #e5e7eb;
-      }
-
-      .install-btn.secondary:hover {
-        background: #e5e7eb;
-      }
-
-      @keyframes slideUpFromBottom {
-        from {
-          opacity: 0;
-          transform: translateY(100px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      /* Hide install prompt in standalone mode */
-      @media (display-mode: standalone) {
-        #install-prompt {
-          display: none !important;
-        }
-      }
-    </style>
   </head>
   <body>
     <!-- Loading Screen Modernizado -->
@@ -458,7 +114,7 @@
       // Registrar Service Worker
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/sw.js')
+          navigator.serviceWorker.register('/Reporte-nas-Estradas/sw.js')
             .then((registration) => {
               console.log('SW registrado com sucesso:', registration.scope);
             })
