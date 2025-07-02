@@ -543,6 +543,121 @@ function HistoryScreen() {
   )
 }
 
+// Componente para prompt de instalação PWA
+function InstallPrompt() {
+  const [deferredPrompt, setDeferredPrompt] = useState(null)
+  const [showInstallPrompt, setShowInstallPrompt] = useState(false)
+  const [isInstalled, setIsInstalled] = useState(false)
+
+  useEffect(() => {
+    // Verificar se já está instalado
+    if (window.matchMedia('(display-mode: standalone)').matches) {
+      setIsInstalled(true)
+      return
+    }
+
+    // Listener para o evento beforeinstallprompt
+    const handleBeforeInstallPrompt = (e) => {
+      e.preventDefault()
+      setDeferredPrompt(e)
+      setShowInstallPrompt(true)
+    }
+
+    // Listener para quando o app é instalado
+    const handleAppInstalled = () => {
+      setIsInstalled(true)
+      setShowInstallPrompt(false)
+      setDeferredPrompt(null)
+    }
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
+    window.addEventListener('appinstalled', handleAppInstalled)
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
+      window.removeEventListener('appinstalled', handleAppInstalled)
+    }
+  }, [])
+
+  const handleInstallClick = async () => {
+    if (!deferredPrompt) return
+
+    deferredPrompt.prompt()
+    const { outcome } = await deferredPrompt.userChoice
+    
+    if (outcome === 'accepted') {
+      setShowInstallPrompt(false)
+    }
+    
+    setDeferredPrompt(null)
+  }
+
+  const handleDismiss = () => {
+    setShowInstallPrompt(false)
+    // Não mostrar novamente por 24 horas
+    localStorage.setItem('installPromptDismissed', Date.now().toString())
+  }
+
+  // Não mostrar se já foi dispensado recentemente
+  useEffect(() => {
+    const dismissed = localStorage.getItem('installPromptDismissed')
+    if (dismissed) {
+      const dismissedTime = parseInt(dismissed)
+      const hoursAgo = (Date.now() - dismissedTime) / (1000 * 60 * 60)
+      if (hoursAgo < 24) {
+        setShowInstallPrompt(false)
+      }
+    }
+  }, [])
+
+  if (isInstalled || !showInstallPrompt || !deferredPrompt) {
+    return null
+  }
+
+  return (
+    <div className="fixed bottom-4 left-4 right-4 z-50">
+      <Card className="border-2 border-blue-500 shadow-lg">
+        <CardContent className="pt-4">
+          <div className="flex items-start justify-between">
+            <div className="flex-1">
+              <h3 className="font-semibold text-blue-700 mb-1">
+                📱 Instalar App
+              </h3>
+              <p className="text-sm text-gray-600 mb-3">
+                Instale o Reporte Estradas em seu celular para acesso rápido e uso offline!
+              </p>
+              <div className="flex space-x-2">
+                <Button 
+                  onClick={handleInstallClick}
+                  size="sm"
+                  className="bg-blue-600 hover:bg-blue-700"
+                >
+                  Instalar
+                </Button>
+                <Button 
+                  onClick={handleDismiss}
+                  variant="outline"
+                  size="sm"
+                >
+                  Agora não
+                </Button>
+              </div>
+            </div>
+            <Button
+              onClick={handleDismiss}
+              variant="ghost"
+              size="sm"
+              className="p-1 h-auto"
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  )
+}
+
 // Componente principal da aplicação
 function App() {
   return (
@@ -555,6 +670,7 @@ function App() {
             <Route path="/historico" element={<HistoryScreen />} />
           </Routes>
         </main>
+        <InstallPrompt />
       </div>
     </Router>
   )

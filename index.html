@@ -16,13 +16,26 @@
     
     <!-- Apple PWA Meta Tags -->
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="Reporte Estradas" />
     <link rel="apple-touch-icon" href="/icon-192.png" />
+    <link rel="apple-touch-startup-image" href="/icon-512.png" />
     
     <!-- Microsoft PWA Meta Tags -->
     <meta name="msapplication-TileColor" content="#2563eb" />
     <meta name="msapplication-TileImage" content="/icon-192.png" />
+    <meta name="msapplication-navbutton-color" content="#2563eb" />
+    
+    <!-- Mobile specific tags -->
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="application-name" content="Reporte Estradas" />
+    
+    <!-- Preload key resources -->
+    <link rel="preload" href="/icon-192.png" as="image" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    
+    <!-- Prevent auto zoom on iOS -->
+    <meta name="format-detection" content="telephone=no" />
     
     <!-- Open Graph Meta Tags -->
     <meta property="og:type" content="website" />

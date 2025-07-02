@@ -1,9 +1,11 @@
-const CACHE_NAME = 'reporte-estradas-v1'
+const CACHE_NAME = 'reporte-estradas-v2'
+const BASE_URL = '/Reporte-nas-Estradas'
 const urlsToCache = [
-  '/',
-  '/static/js/bundle.js',
-  '/static/css/main.css',
-  '/manifest.json'
+  `${BASE_URL}/`,
+  `${BASE_URL}/index.html`,
+  `${BASE_URL}/manifest.json`,
+  `${BASE_URL}/icon-192.png`,
+  `${BASE_URL}/icon-512.png`
 ]
 
 // Instalar service worker
