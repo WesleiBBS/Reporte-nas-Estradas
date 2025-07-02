@@ -292,6 +292,110 @@
           background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
       }
+
+      /* Install Prompt Styling */
+      #install-prompt {
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+        right: 20px;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        padding: 20px;
+        z-index: 10000;
+        display: none;
+        animation: slideUpFromBottom 0.5s ease-out forwards;
+        max-width: 400px;
+        margin: 0 auto;
+      }
+
+      #install-prompt.show {
+        display: block;
+      }
+
+      .install-icon {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+        border-radius: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 15px;
+        box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+      }
+
+      .install-content h3 {
+        margin: 0 0 8px 0;
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #1f2937;
+      }
+
+      .install-content p {
+        margin: 0 0 15px 0;
+        color: #6b7280;
+        font-size: 0.9rem;
+        line-height: 1.4;
+      }
+
+      .install-buttons {
+        display: flex;
+        gap: 10px;
+      }
+
+      .install-btn {
+        flex: 1;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .install-btn.primary {
+        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+        color: white;
+        box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+      }
+
+      .install-btn.primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+      }
+
+      .install-btn.secondary {
+        background: #f3f4f6;
+        color: #6b7280;
+        border: 1px solid #e5e7eb;
+      }
+
+      .install-btn.secondary:hover {
+        background: #e5e7eb;
+      }
+
+      @keyframes slideUpFromBottom {
+        from {
+          opacity: 0;
+          transform: translateY(100px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Hide install prompt in standalone mode */
+      @media (display-mode: standalone) {
+        #install-prompt {
+          display: none !important;
+        }
+      }
     </style>
   </head>
   <body>
@@ -304,11 +408,53 @@
         <p>📱 PWA - Funciona offline</p>
       </div>
     </div>
+
+    <!-- Install Prompt -->
+    <div id="install-prompt">
+      <div style="display: flex; align-items: flex-start; gap: 15px;">
+        <div class="install-icon">
+          <span style="font-size: 24px;">📱</span>
+        </div>
+        <div class="install-content" style="flex: 1;">
+          <h3>🛣️ Instalar Reporte Estradas</h3>
+          <p>Adicione este app à sua tela inicial para acesso rápido e use offline!</p>
+          <div class="install-buttons">
+            <button id="install-button" class="install-btn primary">
+              ⬇️ Instalar
+            </button>
+            <button id="dismiss-button" class="install-btn secondary">
+              Depois
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
     
     <div id="root"></div>
     <script type="module" src="/main.jsx"></script>
     
     <script>
+      let deferredPrompt;
+      let installPromptElement;
+      let installButton;
+      let dismissButton;
+
+      // Elementos do DOM
+      window.addEventListener('DOMContentLoaded', () => {
+        installPromptElement = document.getElementById('install-prompt');
+        installButton = document.getElementById('install-button');
+        dismissButton = document.getElementById('dismiss-button');
+
+        // Event listeners para os botões
+        if (installButton) {
+          installButton.addEventListener('click', installApp);
+        }
+        
+        if (dismissButton) {
+          dismissButton.addEventListener('click', dismissInstallPrompt);
+        }
+      });
+
       // Registrar Service Worker
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
@@ -334,32 +480,110 @@
         }, 1000);
       });
       
-      // Detectar instalação PWA
-      let deferredPrompt;
+      // Detectar prompt de instalação PWA
       window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
         deferredPrompt = e;
         
-        // Mostrar botão de instalação customizado se necessário
-        const installButton = document.getElementById('install-button');
-        if (installButton) {
-          installButton.style.display = 'block';
-          installButton.addEventListener('click', () => {
-            deferredPrompt.prompt();
-            deferredPrompt.userChoice.then((choiceResult) => {
-              if (choiceResult.outcome === 'accepted') {
-                console.log('Usuário aceitou instalar o PWA');
-              }
-              deferredPrompt = null;
-            });
-          });
+        // Verificar se não foi dispensado recentemente
+        const dismissedTime = localStorage.getItem('installPromptDismissed');
+        const now = new Date().getTime();
+        const oneDayAgo = 24 * 60 * 60 * 1000; // 24 horas em milissegundos
+        
+        if (!dismissedTime || (now - parseInt(dismissedTime)) > oneDayAgo) {
+          // Mostrar prompt após um delay
+          setTimeout(() => {
+            showInstallPrompt();
+          }, 3000); // Mostra após 3 segundos
         }
       });
+
+      // Função para mostrar o prompt de instalação
+      function showInstallPrompt() {
+        if (installPromptElement && deferredPrompt) {
+          installPromptElement.classList.add('show');
+        }
+      }
+
+      // Função para instalar o app
+      async function installApp() {
+        if (!deferredPrompt) {
+          // Fallback para iOS ou outros navegadores
+          showIOSInstallInstructions();
+          return;
+        }
+
+        // Mostrar o prompt nativo
+        deferredPrompt.prompt();
+        
+        // Aguardar a escolha do usuário
+        const { outcome } = await deferredPrompt.userChoice;
+        
+        if (outcome === 'accepted') {
+          console.log('Usuário aceitou instalar o PWA');
+          hideInstallPrompt();
+        } else {
+          console.log('Usuário recusou instalar o PWA');
+        }
+        
+        deferredPrompt = null;
+      }
+
+      // Função para dispensar o prompt
+      function dismissInstallPrompt() {
+        hideInstallPrompt();
+        // Salvar o timestamp para não mostrar novamente por 24 horas
+        localStorage.setItem('installPromptDismissed', new Date().getTime().toString());
+      }
+
+      // Função para esconder o prompt
+      function hideInstallPrompt() {
+        if (installPromptElement) {
+          installPromptElement.classList.remove('show');
+        }
+      }
+
+      // Instrucões específicas para iOS
+      function showIOSInstallInstructions() {
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+        const isInStandaloneMode = ('standalone' in window.navigator) && (window.navigator.standalone);
+        
+        if (isIOS && !isInStandaloneMode) {
+          alert(`Para instalar este app no seu iPhone/iPad:
+          
+1. Toque no ícone de compartilhar (📤) 
+2. Role para baixo e toque em "Adicionar à Tela de Início"
+3. Toque em "Adicionar" para confirmar
+          
+O app ficará disponível na sua tela inicial!`);
+        } else {
+          alert(`Para usar este app:
+          
+• Adicione um atalho à tela inicial do seu dispositivo
+• O app funcionará offline após ser instalado
+• Acesse através do ícone na tela inicial`);
+        }
+      }
       
       // Detectar quando PWA foi instalado
       window.addEventListener('appinstalled', (evt) => {
-        console.log('PWA foi instalado');
+        console.log('PWA foi instalado com sucesso!');
+        hideInstallPrompt();
+        
+        // Opcional: mostrar mensagem de sucesso
+        setTimeout(() => {
+          alert('🎉 App instalado com sucesso! Agora você pode acessá-lo pela tela inicial.');
+        }, 1000);
       });
+
+      // Detectar se já está rodando como PWA
+      if (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) {
+        console.log('App rodando como PWA instalada');
+        // Esconder prompt se já está instalado
+        if (installPromptElement) {
+          installPromptElement.style.display = 'none';
+        }
+      }
     </script>
   </body>
 </html>
