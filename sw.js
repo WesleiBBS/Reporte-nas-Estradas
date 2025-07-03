@@ -1,4 +1,4 @@
-const CACHE_NAME = 'reporte-estradas-v3'
+const CACHE_NAME = 'reporte-estradas-v4-neumorphism'
 
 // Detectar se está em desenvolvimento ou produção
 const isProduction = self.location.hostname !== 'localhost'
